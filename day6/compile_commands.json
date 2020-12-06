@@ -1,0 +1,13 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=gnu++2a",
+      "t1.cpp"
+    ],
+    "directory": "/home/dcm/misc/advent_of_code_2020.git/trunk/day6",
+    "file": "/home/dcm/misc/advent_of_code_2020.git/trunk/day6/t1.cpp",
+    "output": "/home/dcm/misc/advent_of_code_2020.git/trunk/day6/t1.o"
+  }
+]
