@@ -1,0 +1,17 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-ggdb3",
+      "-O0",
+      "-fno-inline",
+      "-Wall",
+      "-std=gnu++2a",
+      "t2.cpp"
+    ],
+    "directory": "/home/dcm/misc/advent_of_code_2020.git/trunk/day7",
+    "file": "/home/dcm/misc/advent_of_code_2020.git/trunk/day7/t2.cpp",
+    "output": "/home/dcm/misc/advent_of_code_2020.git/trunk/day7/t2.o"
+  }
+]
