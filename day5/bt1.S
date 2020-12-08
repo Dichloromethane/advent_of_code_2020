@@ -8,7 +8,7 @@
 .data
 masks:
 two_bytes:
-  .rep 8
+  .rep 32
   .byte 0x04
   .endr
 tformat:
@@ -27,14 +27,8 @@ tformat:
 #define n %rsi
 
 #define tmp %rax
-#define d0 %rcx
-#define d1 %rdx
-#define d2 %r8
-#define d3 %r9
-#define d0_1 %r10
-#define d1_1 %r11
-#define d2_1 %r12
-#define d3_1 %r13
+#define t0 %rcx
+#define t1 %r10
 #define mrtwo %r14
 #define tf %r15
 
@@ -42,6 +36,9 @@ tformat:
 #define vacc %xmm1
 #define vcand %xmm2
 #define vzero %xmm3
+
+#define d0 %ymm4
+#define d1 %ymm5
 
 .align 16
 
@@ -52,7 +49,7 @@ parse_f:
   pushq %r14
 
   leaq masks(%rip), tmp
-  movq two_bytes - masks(tmp), mrtwo
+  vmovdqu two_bytes - masks(tmp), mrtwo
   movq tformat - masks(tmp), tf
   
   vpxor vzero, vzero, vzero
@@ -60,57 +57,23 @@ parse_f:
   vpsrlw $1, vacc, vacc
 
 loop:
-  movbeq    (in), d0
-  movbeq   8(in), d1
-  movbeq 2*8(in), d2
-  movbeq 3*8(in), d3
+  vmovdqu (in), d0
+  vmovdqu 4*8+1(in), d1
 
-  movbeq 4*8+1(in), d0_1
-  movbeq 5*8+1(in), d1_1
-  movbeq 6*8+1(in), d2_1
-  movbeq 7*8+1(in), d3_1
+  vpand d0, mrtwo, d0
+  vpand d1, mrtwo, d1
 
-  andq mrtwo, d0
-  andq mrtwo, d1
-  andq mrtwo, d2
-  andq mrtwo, d3
+  vcmpeqb d0, mrtwo, d0
+  vcmpeqb d1, mrtwo, d1
 
-  andq mrtwo, d0_1
-  andq mrtwo, d1_1
-  andq mrtwo, d2_1
-  andq mrtwo, d3_1
+  vpmovmskb d0, t0
+  vpmovmskb d1, t1
 
-  pextq mrtwo, d0, d0
-  pextq mrtwo, d1, d1 
-  pextq mrtwo, d2, d2 // maybe do some preprocessing before,
-  pextq mrtwo, d3, d3 // to avoid some p1 contention
+  pdepq tf, t0, t0
+  pdepq tf, t1, t1
 
-  pextq mrtwo, d0_1, d0_1
-  pextq mrtwo, d1_1, d1_1
-  pextq mrtwo, d2_1, d2_1 
-  pextq mrtwo, d3_1, d3_1
-
-  shlq $24, d0
-  shlq $16, d1
-  shlq $8,  d2
-
-  shlq $24, d0_1
-  shlq $16, d1_1
-  shlq $8,  d2_1
-
-  orq d1, d0
-  orq d3, d2
-  orq d2, d0
-
-  orq d1_1, d0_1
-  orq d3_1, d2_1
-  orq d2_1, d0_1
-
-  pdepq tf, d0, d0
-  pdepq tf, d0_1, d0_1
-
-  vpinsrq $0, d0,   vzero, vcand
-  vpinsrq $1, d0_1, vcand, vcand
+  vpinsrq $0, t0,   vzero, vcand
+  vpinsrq $1, t1, vcand, vcand
 
   // calculates the minimum of the one's complement
   vpcmpgtw vcand, vacc, vmask
