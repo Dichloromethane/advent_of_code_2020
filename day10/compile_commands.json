@@ -1,0 +1,14 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=gnu++2a",
+      "-fsanitize=undefined",
+      "t2.cpp"
+    ],
+    "directory": "/home/dcm/misc/advent_of_code_2020.git/trunk/day10",
+    "file": "/home/dcm/misc/advent_of_code_2020.git/trunk/day10/t2.cpp",
+    "output": "/home/dcm/misc/advent_of_code_2020.git/trunk/day10/t2.o"
+  }
+]
